@@ -11,9 +11,8 @@ from langchain.prompts import (
 from langchain.pydantic_v1 import Extra
 from langchain.vectorstores import Pinecone
 
-from stampy_chat.env import PINECONE_INDEX, PINECONE_NAMESPACE, OPENAI_API_KEY, REMOTE_CHAT_INSTANCE
+from stampy_chat.env import PINECONE_INDEX, PINECONE_NAMESPACE, OPENAI_API_KEY, REMOTE_CHAT_INSTANCE, COMPLETIONS_MODEL
 from stampy_chat.callbacks import StampyCallbackHandler
-
 
 
 class RemoteVectorStore(VectorStore):
@@ -137,6 +136,7 @@ def format_block(block) -> Dict[str, Any]:
         "tags": block.get('tags'),
         "text": block['text']
     }
+
 
 
 def get_top_k_blocks(query, k):

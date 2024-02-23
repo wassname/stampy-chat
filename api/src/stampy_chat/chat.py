@@ -163,6 +163,24 @@ class ModeratedChatPrompt(ChatPromptTemplate):
 def get_model(**kwargs):
     return ChatOpenAI(openai_api_key=OPENAI_API_KEY, **kwargs)
 
+def transform_query(query: str) -> str:
+    """
+    Transform the query into a new query and an example answer for better similarity search.
+    """
+    llm=get_model(model=COMPLETIONS_MODEL)
+    prompt_template = ChatPromptTemplate.from_messages([
+        ChatMessagePromptTemplate.from_template(template="Please draft a search query that will find documents to answer the following question: {query}", role='user'),
+    ])
+    chain = LLMChain(llm=llm, prompt=prompt_template)
+    new_query = chain.invoke({"query": query})['text']
+
+    prompt_template = ChatPromptTemplate.from_messages([
+        ChatMessagePromptTemplate.from_template(template="Please draft an concrete and concise example answer to the following question: {query}", role='user'),
+    ])
+    chain = LLMChain(llm=llm, prompt=prompt_template)
+    example_answer = chain.invoke({"query": query})['text']
+    return dict(new_query=new_query, example_answer=example_answer)
+
 
 class LLMInputsChain(LLMChain):
 
@@ -310,3 +328,5 @@ def run_query(session_id: str, query: str, history: List[Dict], settings: Settin
         callback({'state': 'done'})
         callback(None)  # make sure the callback handler know that things have ended
     return result
+
+

@@ -12,7 +12,7 @@ from flask_cors import CORS, cross_origin
 from stampy_chat import logging
 from stampy_chat.env import PINECONE_INDEX, FLASK_PORT, LANGCHAIN_API_KEY, LANGCHAIN_PROJECT
 from stampy_chat.settings import Settings
-from stampy_chat.chat import run_query
+from stampy_chat.chat import run_query, transform_query
 from stampy_chat.callbacks import stream_callback
 from stampy_chat.citations import get_top_k_blocks
 from stampy_chat.db.session import make_session
@@ -40,6 +40,12 @@ def semantic():
 
     query = request.json['query']
     k = request.json.get('k', 20)
+
+    # try elastic and other searches
+    n = transform_query(query)
+    logging.info(f'query=`{query}`, new_query=`{n["new_query"]}` example=`{n["example"]}`')
+    query = f'{query}. {n["new_query"]}. {n["example"]}'
+
     return jsonify(get_top_k_blocks(query, k))
 
 
@@ -60,6 +66,12 @@ def chat():
     if query is None and history:
         query = history[-1].get('content')
         history = history[:-1]
+
+    # TODO: try elastic and other searches
+    # TODO ideally separate searches for example and both queries
+    n = transform_query(query)
+    logging.info(f'query=`{query}`, new_query=`{n["new_query"]}` example=`{n["example"]}`')
+    query = f'{query}. {n["new_query"]}. {n["example"]}'
 
     def formatter(item):
         if isinstance(item, Exception):
