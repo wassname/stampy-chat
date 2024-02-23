@@ -21,6 +21,7 @@ setup(
         'python-dotenv',
         'discord-webhook',
         'requests',
+        'langchain',
 
         'alembic',
         'sqlalchemy',
