@@ -43,8 +43,8 @@ def semantic():
 
     # try elastic and other searches
     n = transform_query(query)
-    logging.info(f'query=`{query}`, new_query=`{n["new_query"]}` example=`{n["example"]}`')
-    query = f'{query}. {n["new_query"]}. {n["example"]}'
+    logging.info(f'query=`{query}`, new_query=`{n["new_query"]}` example=`{n["example_answer"]}`')
+    query = f'{query}. {n["new_query"]}. {n["example_answer"]}'
 
     return jsonify(get_top_k_blocks(query, k))
 
@@ -70,8 +70,8 @@ def chat():
     # TODO: try elastic and other searches
     # TODO ideally separate searches for example and both queries
     n = transform_query(query)
-    logging.info(f'query=`{query}`, new_query=`{n["new_query"]}` example=`{n["example"]}`')
-    query = f'{query}. {n["new_query"]}. {n["example"]}'
+    logging.info(f'query=`{query}`, new_query=`{n["new_query"]}` example=`{n["example_answer"]}`')
+    query = f'{query}. {n["new_query"]}. {n["example_answer"]}'
 
     def formatter(item):
         if isinstance(item, Exception):

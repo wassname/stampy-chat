@@ -169,7 +169,7 @@ def transform_query(query: str) -> str:
     """
     llm=get_model(model=COMPLETIONS_MODEL)
     prompt_template = ChatPromptTemplate.from_messages([
-        ChatMessagePromptTemplate.from_template(template="Please draft a search query that will find documents to answer the following question: {query}", role='user'),
+        ChatMessagePromptTemplate.from_template(template="Please draft an academic search query with synonyms and alternative phrases that will find documents to answer the following question: {query}", role='user'),
     ])
     chain = LLMChain(llm=llm, prompt=prompt_template)
     new_query = chain.invoke({"query": query})['text']
