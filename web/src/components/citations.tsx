@@ -71,7 +71,8 @@ export const ShowCitation: React.FC<{ citation: Citation }> = ({
   citation,
 }) => {
   var c_str = citation.title;
-
+  const split = citation.text.split('"""');
+  const text = split.length === 1 ? citation.text : split[1];
   if (citation.authors && citation.authors.length > 0)
     c_str += " - " + citation.authors.join(", ");
   if (citation.date && citation.date !== "") c_str += " - " + citation.date;
@@ -83,16 +84,18 @@ export const ShowCitation: React.FC<{ citation: Citation }> = ({
       : `https://duckduckgo.com/?q=${encodeURIComponent(citation.title)}`;
 
   return (
-    <A
-      className={
-        Colours[(citation.index - 1) % Colours.length] +
-        " my-2 flex w-fit items-center rounded border-2 text-sm no-underline"
-      }
-      href={url}
-    >
-      <span className="mx-1"> [{citation.index}] </span>
-      <p className="mx-1 my-0"> {c_str} </p>
-    </A>
+    <Popup content={text || ""}>
+      <A
+        className={
+          Colours[(citation.index - 1) % Colours.length] +
+          " my-2 flex w-fit items-center rounded border-2 text-sm no-underline"
+        }
+        href={url}
+      >
+        <span className="mx-1"> [{citation.index}] </span>
+        <p className="mx-1 my-0"> {c_str} </p>
+      </A>
+    </Popup>
   );
 };
 
@@ -121,7 +124,7 @@ export const CitationRef: React.FC<{ citation?: Citation }> = ({
   citation,
 }) => {
   if (!citation) return null;
-
+  
   const split = citation.text.split('"""');
   const text = split.length === 1 ? citation.text : split[1];
   const url =
