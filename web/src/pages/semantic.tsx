@@ -77,7 +77,7 @@ type SemanticEntry = {
   text: string;
 };
 
-const ShowSemanticEntry: React.FC<{ entry: SemanticEntry }> = ({ entry }) => {
+export const ShowSemanticEntry: React.FC<{ entry: SemanticEntry }> = ({ entry }) => {
   return (
     <div className="my-3">
       {/* horizontally split first row, title on left, authors on right */}

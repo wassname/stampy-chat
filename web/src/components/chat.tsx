@@ -20,6 +20,7 @@ import useCitations from "../hooks/useCitations";
 import { SearchBox } from "../components/searchbox";
 import { AssistantEntry } from "../components/assistant";
 import { Entry as EntryTag } from "../components/entry";
+import _, { ShowSemanticEntry } from "../pages/semantic";
 
 const MAX_FOLLOWUPS = 4;
 
@@ -206,40 +207,54 @@ const Chat = ({
     }
   };
 
-  return (
-    <ul className="flex-auto">
-      {entries.map(
-        (entry, i) =>
-          !entry.deleted && (
-            <li className="group relative flex" key={i}>
-              <EntryTag entry={entry} />
-              <span
-                className="delete-item absolute right-5 hidden cursor-pointer group-hover:block"
-                onClick={() => deleteEntry(i)}
-              >
-                ✕
-              </span>
-            </li>
-          )
-      )}
+  const AsistantEntry = entries.filter(e => e.role === "assistant")
+  const lastAsistantEntry = AsistantEntry[AsistantEntry.length - 1] as AssistantEntryType
 
-      <Followups followups={followups} onClick={abortable(fetchFollowup)} />
-      <SearchBox
-        search={abortable(search)}
-        query={query}
-        onQuery={(v: string) => {
-          setQuery(v);
-          onQuery && onQuery(v);
-        }}
-        abortSearch={() => controller.abort()}
-      />
-      <ChatResponse
-        current={current}
-        defaultElem={
-          <button onClick={() => setEntries([])}>Clear history</button>
-        }
-      />
-    </ul>
+  return (
+    <div>
+      <ul className="flex-auto">
+        {entries.map(
+          (entry, i) =>
+            !entry.deleted && (
+              <li className="group relative flex" key={i}>
+                <EntryTag entry={entry} />
+                <span
+                  className="delete-item absolute right-5 hidden cursor-pointer group-hover:block"
+                  onClick={() => deleteEntry(i)}
+                >
+                  ✕
+                </span>
+              </li>
+            )
+        )}
+
+        <Followups followups={followups} onClick={abortable(fetchFollowup)} />
+        <SearchBox
+          search={abortable(search)}
+          query={query}
+          onQuery={(v: string) => {
+            setQuery(v);
+            onQuery && onQuery(v);
+          }}
+          abortSearch={() => controller.abort()}
+        />
+        <ChatResponse
+          current={current}
+          defaultElem={
+            <button onClick={() => setEntries([])}>Clear history</button>
+          }
+        />
+      </ul>
+      <ul>
+        <h2 className="bg-red-100 text-red-800">Latest references</h2>
+        {lastAsistantEntry && lastAsistantEntry.citations && (
+        lastAsistantEntry.citations.map((entry, i) => (
+          <li key={"entry" + i}>
+            <ShowSemanticEntry entry={entry} />
+          </li>
+        )))}
+      </ul>
+    </div>
   );
 };
 
